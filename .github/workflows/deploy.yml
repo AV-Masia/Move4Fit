@@ -1,0 +1,63 @@
+name: Deploy web to GitHub Pages
+
+# Собирает веб-версию Expo (react-native-web) и публикует на GitHub Pages,
+# чтобы приложение можно было открыть по адресу https://av-masia.github.io/Move4Fit/
+# без локального запуска. Подпуть /Move4Fit задан в app.json → experiments.baseUrl.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Один деплой за раз; новый push отменяет предыдущий незавершённый.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Export web build
+        run: npx expo export --platform web --output-dir dist
+
+      - name: SPA fallback and disable Jekyll
+        # output: single — это SPA; 404.html нужен, чтобы прямые ссылки на вложенные
+        # экраны (/exercise/..., обновление страницы) не отдавали 404. .nojekyll — чтобы
+        # GitHub не прятал папку _expo (имена с подчёркиванием).
+        run: |
+          cp dist/index.html dist/404.html
+          touch dist/.nojekyll
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
