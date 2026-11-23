@@ -1,8 +1,9 @@
-import { Tabs } from 'expo-router';
+import { Tabs, router } from 'expo-router';
 import { Text } from 'react-native';
 
 import { AdminGate } from '@/src/admin/gate';
-import { colors, fs, headerTheme, useLayout } from '@/src/ui/kit';
+import { ADMIN_ACCESS } from '@/src/config';
+import { Button, H1, P, Screen, colors, fs, headerTheme, useLayout } from '@/src/ui/kit';
 
 const icon = (emoji: string) => () => <Text style={{ fontSize: fs(18), lineHeight: fs(22) }}>{emoji}</Text>;
 
@@ -10,10 +11,27 @@ const icon = (emoji: string) => () => <Text style={{ fontSize: fs(18), lineHeigh
  * Кабинет администратора: разделы в меню (на компьютере — слева, на телефоне — внизу).
  * У разделов со списком и редактором своя шапка с кнопкой «Назад» (см. _layout в папке раздела).
  * Вход защищён мягким паролем (см. AdminGate / ADMIN_ACCESS).
+ *
+ * На публичной веб-сборке кабинет выключен (ADMIN_ACCESS.enabled): разделы не монтируются,
+ * данные семей не загружаются — посетитель сайта видит только заглушку.
  */
 export default function AdminLayout() {
   const { desktop } = useLayout();
   const single = { headerShown: true };
+
+  if (!ADMIN_ACCESS.enabled) {
+    return (
+      <Screen>
+        <H1>Раздел недоступен</H1>
+        <P muted>
+          Кабинет куратора не входит в эту версию приложения. Он доступен в рабочей сборке — обратитесь к команде
+          Move4Fit.
+        </P>
+        <Button title="На главную" onPress={() => router.replace('/(tabs)')} />
+      </Screen>
+    );
+  }
+
   return (
     <AdminGate>
     <Tabs

@@ -33,6 +33,11 @@ jobs:
       - run: npm ci
 
       - name: Export web build
+        # Публичный сайт без кабинета куратора: он не для посетителей, а клиентский пароль
+        # не защищает реальные данные. Кабинет доступен локально (npm run dev) и в нативной
+        # сборке. См. ADMIN_ACCESS.enabled в src/config.ts.
+        env:
+          EXPO_PUBLIC_ADMIN: "off"
         run: npx expo export --platform web --output-dir dist
 
       - name: SPA fallback and disable Jekyll
