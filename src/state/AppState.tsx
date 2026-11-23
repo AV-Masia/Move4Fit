@@ -11,6 +11,7 @@ import { MAX_MESSAGE_LENGTH, deliver, type ChatMessage } from '@/src/chat/source
 import type {
   ChildProfile,
   Difficulty,
+  Fatigue,
   FamilyGoal,
   Feedback,
   GoalRating,
@@ -19,6 +20,7 @@ import type {
   ProgressMap,
   SessionLog,
   TrackingResult,
+  WhatNext,
   WorkoutPlan,
 } from '@/src/domain/types';
 
@@ -64,7 +66,7 @@ interface PersistedState {
   readArticles?: string[];
   /** Упражнения, сделанные отдельно от занятия. */
   practices?: PracticeLog[];
-  /** Выбранное оформление; пусто — по полу ребёнка. */
+  /** Выбранное оформление; пусто — нейтральная тема по умолчанию (defaultTheme), от пола ребёнка не зависит. */
   theme?: ThemeName;
   /** Переписка с куратором. */
   chat?: ChatMessage[];
@@ -81,6 +83,9 @@ export interface SessionDetails {
   painSigns?: string[];
   painArea?: string;
   durationSec?: number;
+  /** Усталость после занятия и «что дальше»; влияют на прогрессию (см. applySessionResult). */
+  fatigue?: Fatigue;
+  whatNext?: WhatNext;
 }
 
 const EMPTY: PersistedState = { progress: {}, sessions: [], trackingResults: [] };
@@ -120,6 +125,8 @@ interface AppStateValue extends PersistedState {
   setTheme(theme: ThemeName | undefined): void;
   /** Сообщение родителя куратору: сохраняется в переписке и передаётся на доставку. */
   sendMessage(text: string): void;
+  /** Ответ куратора из кабинета администратора (пока без сервера — в пределах этого устройства). */
+  curatorReply(text: string): void;
   addTrackingResult(testId: string, value: number): void;
   resetAll(): void;
 }
@@ -230,7 +237,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const completeSession = useCallback<AppStateValue['completeSession']>(
     (plan, feedback, pain, details) => {
-      const result = applySessionResult(state.progress, plan.items, feedback, pain, details?.itemFeedback);
+      const result = applySessionResult(state.progress, plan.items, feedback, pain, details?.itemFeedback, {
+        fatigue: details?.fatigue,
+        whatNext: details?.whatNext,
+      });
       const log: SessionLog = {
         id: newId(),
         childId: state.child?.id ?? '',
@@ -242,6 +252,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         painSigns: pain ? details?.painSigns : undefined,
         painArea: pain ? details?.painArea : undefined,
         durationSec: details?.durationSec,
+        fatigue: details?.fatigue,
+        whatNext: details?.whatNext,
       };
       setState((s) => ({ ...s, progress: result.progress, sessions: [...s.sessions, log] }));
       return result;
@@ -341,6 +353,17 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       .catch(() => {});
   }, []);
 
+  const curatorReply = useCallback((text: string) => {
+    const trimmed = text.trim().slice(0, MAX_MESSAGE_LENGTH);
+    if (!trimmed) return;
+    const message: ChatMessage = { id: newId(), from: 'curator', text: trimmed, date: new Date().toISOString(), delivered: true };
+    setState((s) => ({
+      ...s,
+      // Куратор увидел переписку в кабинете — сообщения родителя считаем доставленными.
+      chat: [...(s.chat ?? []).map((m) => (m.from === 'parent' ? { ...m, delivered: true } : m)), message],
+    }));
+  }, []);
+
   const resetAll = useCallback(() => setState(EMPTY), []);
 
   // Экраны получают ребёнка с возрастом на сегодня: с момента ввода он «растёт» сам.
@@ -373,10 +396,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       ratePractice,
       setTheme,
       sendMessage,
+      curatorReply,
       addTrackingResult,
       resetAll,
     }),
-    [state, agedChild, ready, storageProblem, signUp, saveChild, updateChild, dismissProfileNotice, acceptRules, acknowledgePain, saveAssessment, confirmDoctorClearance, completeSession, resolveBreak, setGoal, reviewGoal, markArticleRead, setExerciseDifficulty, addPractice, ratePractice, setTheme, sendMessage, addTrackingResult, resetAll],
+    [state, agedChild, ready, storageProblem, signUp, saveChild, updateChild, dismissProfileNotice, acceptRules, acknowledgePain, saveAssessment, confirmDoctorClearance, completeSession, resolveBreak, setGoal, reviewGoal, markArticleRead, setExerciseDifficulty, addPractice, ratePractice, setTheme, sendMessage, curatorReply, addTrackingResult, resetAll],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

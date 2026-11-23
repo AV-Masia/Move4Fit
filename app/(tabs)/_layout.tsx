@@ -34,7 +34,7 @@ export default function TabsLayout() {
             }),
       }}>
       <Tabs.Screen name="index" options={{ title: 'Сегодня', tabBarIcon: icon('☀️') }} />
-      <Tabs.Screen name="progress" options={{ title: 'Динамика', tabBarIcon: icon('🌱') }} />
+      <Tabs.Screen name="progress" options={{ title: 'Мои успехи', tabBarIcon: icon('🌱') }} />
       <Tabs.Screen name="read" options={{ title: 'Читать', tabBarIcon: icon('📖') }} />
       <Tabs.Screen name="support" options={{ title: 'Куратор', tabBarIcon: icon('💬') }} />
       <Tabs.Screen name="profile" options={{ title: 'Профиль', tabBarIcon: icon('🧡') }} />

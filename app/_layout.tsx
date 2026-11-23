@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
 import { AppStateProvider, useApp } from '@/src/state/AppState';
-import { applyTheme, colors, defaultThemeFor, headerTheme, fs, applyFontScale, useLayout } from '@/src/ui/kit';
+import { applyTheme, colors, defaultTheme, headerTheme, fs, applyFontScale, useLayout } from '@/src/ui/kit';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -43,11 +43,11 @@ function BackButton() {
 /** Шапка внутренних экранов: своя кнопка «Назад» вместо стандартной стрелки. */
 const withBack = { headerBackVisible: false, headerLeft: () => <BackButton /> };
 
-/** Навигация в текущей теме оформления. Тема зависит от пола ребёнка или выбрана в профиле. */
+/** Навигация в текущей теме оформления. Тема по умолчанию нейтральная, семья выбирает свою в профиле. */
 function ThemedApp() {
-  const { child, theme } = useApp();
+  const { theme } = useApp();
   // Палитру переключаем до отрисовки экранов, чтобы они сразу прочитали новые цвета.
-  applyTheme(theme ?? defaultThemeFor(child?.sex));
+  applyTheme(theme ?? defaultTheme());
   // На планшете (между телефоном и компьютером) весь текст на 15 % крупнее.
   const { tablet, desktop } = useLayout();
   // В кабинете администратора текст крупнее на любом экране: там много чтения и правки.
@@ -64,7 +64,7 @@ function ThemedApp() {
         <Stack.Screen name="child/result" options={{ title: 'Результат', headerBackVisible: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="rules" options={{ title: 'Правила', ...withBack }} />
-        <Stack.Screen name="goal" options={{ title: 'Цель', ...withBack }} />
+        <Stack.Screen name="goal" options={{ title: 'Моя цель', ...withBack }} />
         <Stack.Screen name="chat" options={{ title: 'Чат с куратором', ...withBack }} />
         <Stack.Screen name="article/[id]" options={{ title: 'Статья', ...withBack }} />
         <Stack.Screen name="exercise/[id]" options={{ title: 'Упражнение', ...withBack }} />

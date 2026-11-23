@@ -4,7 +4,7 @@ import { View } from 'react-native';
 
 import { ageFromParts, agePartsOf } from '@/src/domain/profile';
 import { useApp } from '@/src/state/AppState';
-import { Button, Chip, ChipRow, Field, P, Screen, defaultThemeFor } from '@/src/ui/kit';
+import { Button, Chip, ChipRow, Field, P, Screen } from '@/src/ui/kit';
 
 const toInt = (s: string) => (s.trim() === '' ? 0 : Number(s));
 
@@ -15,9 +15,7 @@ const toInt = (s: string) => (s.trim() === '' ? 0 : Number(s));
  */
 export default function ChildForm() {
   const { edit } = useLocalSearchParams<{ edit?: string }>();
-  const { child, theme, setTheme, saveChild, updateChild } = useApp();
-  // Тема на момент открытия формы — чтобы вернуть её, если родитель нажмёт «Отмена».
-  const [initialTheme] = useState(theme);
+  const { child, saveChild, updateChild } = useApp();
   const editing = !!edit && !!child;
   const initialAge = editing ? agePartsOf(child.ageYears) : null;
 
@@ -31,12 +29,6 @@ export default function ChildForm() {
   const ageFilled = years.trim() !== '' || months.trim() !== '';
   const ageValid = ageFilled && Number.isInteger(y) && Number.isInteger(m) && y >= 0 && y <= 18 && m >= 0 && m <= 11 && y + m > 0;
   const valid = name.trim().length > 0 && ageValid;
-
-  // Цвет оформления меняется сразу при выборе пола, чтобы было видно, как будет выглядеть приложение.
-  const chooseSex = (value: 'girl' | 'boy' | undefined) => {
-    setSex(value);
-    setTheme(defaultThemeFor(value));
-  };
 
   const save = () => {
     const data = {
@@ -67,8 +59,8 @@ export default function ChildForm() {
       {ageFilled && !ageValid && <P muted>Укажите возраст до 18 лет; месяцев — от 0 до 11.</P>}
       <P>Пол (необязательно)</P>
       <ChipRow>
-        <Chip label="Девочка" selected={sex === 'girl'} onPress={() => chooseSex(sex === 'girl' ? undefined : 'girl')} />
-        <Chip label="Мальчик" selected={sex === 'boy'} onPress={() => chooseSex(sex === 'boy' ? undefined : 'boy')} />
+        <Chip label="Девочка" selected={sex === 'girl'} onPress={() => setSex(sex === 'girl' ? undefined : 'girl')} />
+        <Chip label="Мальчик" selected={sex === 'boy'} onPress={() => setSex(sex === 'boy' ? undefined : 'boy')} />
       </ChipRow>
       <P muted>Цвет оформления меняется сразу. В профиле его можно поменять на любой.</P>
       {!editing && (
@@ -80,10 +72,7 @@ export default function ChildForm() {
         <Button
           title="Отмена"
           variant="secondary"
-          onPress={() => {
-            setTheme(initialTheme);
-            router.back();
-          }}
+          onPress={() => router.back()}
         />
       )}
     </Screen>

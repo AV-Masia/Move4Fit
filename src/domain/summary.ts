@@ -64,6 +64,13 @@ export function buildSummary(
     );
   }
 
+  const tired = recent.filter((x) => x.fatigue === 'tired').length;
+  const tooMuch = recent.filter((x) => x.whatNext === 'tooMuch').length;
+  const wantMore = recent.filter((x) => x.whatNext === 'more').length;
+  if (tired > 0) lines.push(`Ребёнок уставал после занятий: ${tired} из ${recent.length}.`);
+  if (tooMuch > 0) lines.push(`Говорил, что было слишком много: ${tooMuch} раз.`);
+  if (wantMore > 0) lines.push(`Просил ещё: ${wantMore} раз.`);
+
   const painful = recent.filter((s) => s.pain);
   if (painful.length === 0) {
     lines.push('Боль или сильный дискомфорт: не отмечали.');

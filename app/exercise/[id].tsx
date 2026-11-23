@@ -9,7 +9,7 @@ import { FEEDBACK_LABELS, exerciseRatings } from '@/src/domain/ratings';
 import type { Difficulty, Feedback } from '@/src/domain/types';
 import { useApp } from '@/src/state/AppState';
 import { ExerciseVideo } from '@/src/ui/ExerciseVideo';
-import { Button, Card, H1, H2, Notice, P, RateRow, Screen, colors, feedbackColor, fs } from '@/src/ui/kit';
+import { Button, Card, DifficultyDots, H1, H2, Notice, P, RateRow, Screen, colors, feedbackColor, fs } from '@/src/ui/kit';
 import { formatClock, useStopwatch } from '@/src/ui/useStopwatch';
 
 const PART_LABEL = { warmup: 'Разминка', main: 'Основная часть', cooldown: 'Заминка' } as const;
@@ -102,9 +102,10 @@ export default function ExerciseScreen() {
                   borderWidth: 2,
                   borderColor: active ? colors.primary : colors.border,
                 }}>
-                <Text style={{ fontSize: fs(13), fontWeight: '700', color: active ? colors.primaryInk : colors.muted }}>
-                  Сложность {v.difficulty} из 3{active ? ' · выбрано' : ''}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <DifficultyDots level={v.difficulty} decorative />
+                  {active && <Text style={{ fontSize: fs(13), fontWeight: '700', color: colors.primaryInk }}>Выбрано</Text>}
+                </View>
                 <Text style={{ fontSize: fs(16), lineHeight: fs(23), color: colors.text }}>{v.instructions}</Text>
               </Pressable>
             );

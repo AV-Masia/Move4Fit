@@ -16,7 +16,8 @@ export interface ChildProfile {
   ageYears: number;
   /** Когда родитель указал возраст (ISO). От этой даты возраст «растёт» сам, см. currentAgeYears. */
   ageSetAt?: string;
-  /** Пол ребёнка — для обращения и цвета оформления по умолчанию. Необязателен. */
+  /** Пол ребёнка — только для обращения. На оформление НЕ влияет: тема по умолчанию
+   * нейтральна (см. defaultTheme в kit.tsx; требование «не привязывать цвет к гендеру»). Необязателен. */
   sex?: 'girl' | 'boy';
   /** Родитель подтвердил, что врач разрешил занятия (нужно при «блокирующих» особенностях). */
   doctorClearanceConfirmed: boolean;
@@ -146,6 +147,12 @@ export interface WorkoutPlan {
   items: PlannedExercise[];
 }
 
+/** Самочувствие ребёнка после занятия: полон сил / нормально / устал. */
+export type Fatigue = 'fresh' | 'ok' | 'tired';
+
+/** Что ребёнок хочет дальше: ещё / на сегодня хватит / было слишком много. */
+export type WhatNext = 'more' | 'done' | 'tooMuch';
+
 export interface SessionLog {
   id: string;
   childId: string;
@@ -156,6 +163,10 @@ export interface SessionLog {
   /** Отзыв по отдельным упражнениям, если родитель его уточнил; иначе действует общий. */
   itemFeedback?: Record<string, Feedback>;
   pain: boolean;
+  /** Усталость после занятия; у старых занятий не задана. */
+  fatigue?: Fatigue;
+  /** «Что дальше» по мнению ребёнка; у старых занятий не задано. */
+  whatNext?: WhatNext;
   /** Что заметил родитель (id из PAIN_SIGNS) и где, если понятно (id из PAIN_AREAS). */
   painSigns?: string[];
   painArea?: string;

@@ -201,7 +201,7 @@ export default function Today() {
             <Button title="Оценить" variant="secondary" onPress={() => router.push({ pathname: '/goal', params: { review: '1' } })} />
           </Card>
         ) : (
-          <ExerciseRow icon="🎯" tint="#FFF3C9" title={goal.text} subtitle="Наша цель" />
+          <ExerciseRow icon="🎯" tint="#FFF3C9" title={goal.text} subtitle="Моя цель" />
         )
       ) : (
         <Card>

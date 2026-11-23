@@ -69,13 +69,20 @@ function pick(pool: Exercise[], count: number, lastDone: Record<string, number>)
 
 /** «Сегодня рекомендуется выполнить эту тренировку». */
 export function buildTodayWorkout(
-  child: Pick<ChildProfile, 'ageYears'>,
+  child: Pick<ChildProfile, 'ageYears'> & Partial<Pick<ChildProfile, 'doctorClearanceConfirmed'>>,
   assessment: FunctionalAssessment,
   progress: ProgressMap,
   history: SessionLog[],
   today: Date = new Date(),
   catalog: Exercise[] = EXERCISES,
 ): WorkoutPlan {
+  // Гейт допуска врача действует и в подборе, а не только в UI (`workoutBlock`):
+  // без подтверждённого допуска план пустой. Это защита на случай переноса подбора
+  // на сервер (Этап 5), где UI-гейта не будет. UI и так показывает экран допуска
+  // раньше, поэтому на текущее поведение приложения это не влияет.
+  if (assessment.clearanceRequired && !child.doctorClearanceConfirmed) {
+    return { date: dayKey(today), items: [] };
+  }
   const eligible = eligibleExercises(child, assessment, catalog);
   const lastDone = lastDoneMap(history);
   const items: PlannedExercise[] = [];

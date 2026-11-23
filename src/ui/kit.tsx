@@ -116,10 +116,9 @@ export function applyFontScale(scale: number) {
   styles = makeStyles();
 }
 
-/** Тема по умолчанию для пола ребёнка; семья может выбрать любую в профиле. */
-export function defaultThemeFor(sex?: 'girl' | 'boy'): ThemeName {
-  // Пол не указан — розовая тема, как основная; «солнечную» можно выбрать в профиле.
-  return sex === 'boy' ? 'sky' : 'rose';
+/** Нейтральная тема по умолчанию: от пола ребёнка не зависит; другую семья выбирает в профиле. */
+export function defaultTheme(): ThemeName {
+  return 'rose';
 }
 
 /** Переключает палитру. Вызывается из корневого layout до отрисовки экранов. */
@@ -581,19 +580,66 @@ export function RateRow({ value, onRate }: { value?: 'easy' | 'ok' | 'hard' | nu
             onPress={() => onRate(o.value)}
             style={({ pressed }) => ({
               flex: 1,
-              minHeight: 76,
+              minHeight: 104,
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 2,
+              gap: 4,
               borderRadius: 18,
-              borderWidth: 2,
+              borderWidth: selected ? 4 : 2,
               borderBottomWidth: pressed ? 2 : 5,
               marginTop: pressed ? 3 : 0,
               borderColor: selected ? colors.primary : colors.border,
               backgroundColor: selected ? colors.primarySoft : colors.card,
             })}>
-            <Text style={{ fontSize: fs(24) }}>{o.icon}</Text>
-            <Text style={{ fontSize: fs(15), fontWeight: '700', color: colors.text }}>{o.label}</Text>
+            <Text style={{ fontSize: fs(40) }}>{o.icon}</Text>
+            <Text style={{ fontSize: fs(15), fontWeight: '700', color: colors.text }}>{selected ? '✓ ' : ''}{o.label}</Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+/** Выбор одного варианта крупными карточками с эмодзи; выбранный отмечен рамкой и галочкой, а не только цветом. */
+export function FaceChoiceRow<T extends string>({
+  options,
+  value,
+  onChange,
+  groupLabel,
+}: {
+  options: readonly { value: T; icon: string; label: string }[];
+  value: T | null;
+  onChange: (v: T) => void;
+  groupLabel: string;
+}) {
+  return (
+    <View accessibilityRole="radiogroup" accessibilityLabel={groupLabel} style={{ flexDirection: 'row', gap: 8 }}>
+      {options.map((o) => {
+        const selected = value === o.value;
+        return (
+          <Pressable
+            key={o.value}
+            accessibilityRole="radio"
+            accessibilityState={{ selected, checked: selected }}
+            accessibilityLabel={o.label}
+            onPress={() => onChange(o.value)}
+            style={{
+              flex: 1,
+              minHeight: 112,
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 4,
+              paddingHorizontal: 4,
+              borderRadius: 18,
+              borderWidth: selected ? 4 : 2,
+              borderColor: selected ? colors.primary : colors.border,
+              backgroundColor: selected ? colors.primarySoft : colors.card,
+            }}>
+            <Text style={{ fontSize: fs(40) }}>{o.icon}</Text>
+            <Text style={{ fontSize: fs(15), fontWeight: '700', color: colors.text, textAlign: 'center' }}>
+              {selected ? '✓ ' : ''}
+              {o.label}
+            </Text>
           </Pressable>
         );
       })}
@@ -699,6 +745,33 @@ export function Choice({ label, selected, onPress }: { label: string; selected: 
       style={[styles.choice, selected && { borderColor: colors.primary, backgroundColor: colors.primarySoft }]}>
       <Text style={{ fontSize: fs(16), color: colors.text, fontWeight: selected ? '700' : '400' }}>{label}</Text>
     </Pressable>
+  );
+}
+
+/**
+ * Сложность 1–3 в виде точек: заполнены первые `level`. Скринридер читает «Сложность N из 3».
+ * Если родитель уже озвучивает сложность сам (кнопка с подписью), передайте `decorative`.
+ */
+export function DifficultyDots({ level, decorative }: { level: number; decorative?: boolean }) {
+  const a11y = decorative
+    ? ({ accessibilityElementsHidden: true, importantForAccessibility: 'no-hide-descendants' } as const)
+    : ({ accessible: true, accessibilityRole: 'image', accessibilityLabel: `Сложность ${level} из 3` } as const);
+  return (
+    <View {...a11y} style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
+      {[1, 2, 3].map((i) => (
+        <View
+          key={i}
+          style={{
+            width: 16,
+            height: 16,
+            borderRadius: 8,
+            borderWidth: 2,
+            borderColor: colors.primary,
+            backgroundColor: i <= level ? colors.primary : 'transparent',
+          }}
+        />
+      ))}
+    </View>
   );
 }
 

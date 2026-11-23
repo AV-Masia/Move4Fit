@@ -213,7 +213,10 @@ export const CLEARANCE_FLAGS: SafetyFlag[] = ['uncontrolled_seizures', 'recent_s
 export const FLAG_EXCLUSIONS: Record<SafetyFlag, ExerciseRisk[]> = {
   uncontrolled_seizures: ['high_intensity', 'breath_holding', 'head_down'],
   recent_surgery: ['impact', 'hip_loading', 'high_intensity'],
-  recent_botulinum: [],
+  // ⚠️ ЧЕРНОВИК, согласовать со специалистом: после ботулинотерапии целевая мышца
+  // временно ослаблена — консервативно исключаем высокоинтенсивную нагрузку.
+  // Раньше флаг был инертен (не исключал ничего) — это был баг.
+  recent_botulinum: ['high_intensity'],
   hip_instability: ['hip_loading', 'impact'],
   shunt: ['head_down', 'impact', 'neck_flexion'],
   fragile_bones: ['impact', 'hip_loading'],

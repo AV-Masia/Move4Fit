@@ -29,7 +29,7 @@ export default function Goal() {
       <Screen>
         <H1>Как продвигается цель?</H1>
         <Card>
-          <P muted>Наша цель</P>
+          <P muted>Моя цель</P>
           <H2>{goal.text}</H2>
         </Card>
         <View style={{ gap: 10 }}>

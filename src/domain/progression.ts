@@ -1,4 +1,4 @@
-import type { Difficulty, Feedback, PlannedExercise, ProgressMap } from './types';
+import type { Difficulty, Fatigue, Feedback, PlannedExercise, ProgressMap, WhatNext } from './types';
 
 /** Сколько «легко» подряд нужно, чтобы усложнить упражнение. */
 export const EASY_STREAK_TO_ADVANCE = 2;
@@ -19,6 +19,9 @@ export interface ProgressionResult {
  *  • «тяжело» → снижаем сложность на 1;
  *  • «нормально» → оставляем, серия «легко» сбрасывается;
  *  • «легко» N раз подряд → повышаем сложность на 1;
+ *  • усталость («устал») или «было много» → тормозим: сложность не повышаем, но серия «легко» сохраняется
+ *    и продолжит копиться (повышение — в ближайшем неутомлённом занятии). Боль и «тяжело» действуют всегда.
+ *    Это правило ⚠️ ЧЕРНОВИК, согласовать со специалистом;
  *  • отзыв можно уточнить для отдельного упражнения — тогда правило применяется к нему отдельно.
  */
 export function applySessionResult(
@@ -28,8 +31,11 @@ export function applySessionResult(
   pain: boolean,
   /** Отзыв по отдельным упражнениям; для остальных действует общий `feedback`. */
   itemFeedback: Record<string, Feedback> = {},
+  /** Усталость и «что дальше» по итогам занятия (⚠️ черновик): при усталости/«было много» сложность не растёт. */
+  session?: { fatigue?: Fatigue; whatNext?: WhatNext },
 ): ProgressionResult {
   const fb = (id: string): Feedback => itemFeedback[id] ?? feedback;
+  const brake = session?.fatigue === 'tired' || session?.whatNext === 'tooMuch';
   const next: ProgressMap = { ...progress };
   for (const item of items) {
     const cur = next[item.exerciseId] ?? { difficulty: item.difficulty, easyStreak: 0 };
@@ -40,7 +46,7 @@ export function applySessionResult(
     } else {
       const streak = cur.easyStreak + 1;
       next[item.exerciseId] =
-        streak >= EASY_STREAK_TO_ADVANCE && cur.difficulty < 3
+        streak >= EASY_STREAK_TO_ADVANCE && cur.difficulty < 3 && !brake
           ? { difficulty: clamp(cur.difficulty + 1), easyStreak: 0 }
           : { difficulty: cur.difficulty, easyStreak: streak };
     }

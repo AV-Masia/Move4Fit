@@ -34,7 +34,7 @@ export default function Progress() {
 
   return (
     <Screen wide>
-      <H1>Динамика</H1>
+      <H1>Мои успехи</H1>
       <Columns>
         <Col>
 

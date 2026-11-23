@@ -243,6 +243,42 @@ describe('прогрессия', () => {
   });
 });
 
+describe('прогрессия: усталость и «что дальше»', () => {
+  const items = [{ exerciseId: 'bridge', difficulty: 1 as const }];
+  const noPain = (p: Parameters<typeof applySessionResult>[0], fb: 'easy' | 'ok' | 'hard', s?: Parameters<typeof applySessionResult>[5]) =>
+    applySessionResult(p, items, fb, false, {}, s);
+
+  it('усталость тормозит повышение, серия сохраняется и срабатывает потом', () => {
+    const r1 = noPain({}, 'easy');
+    const r2 = noPain(r1.progress, 'easy', { fatigue: 'tired' });
+    expect(r2.progress.bridge).toEqual({ difficulty: 1, easyStreak: 2 });
+    const r3 = noPain(r2.progress, 'easy', { fatigue: 'fresh' });
+    expect(r3.progress.bridge).toEqual({ difficulty: 2, easyStreak: 0 });
+  });
+
+  it('«было много» действует так же', () => {
+    const p = { bridge: { difficulty: 1 as const, easyStreak: 1 } };
+    expect(noPain(p, 'easy', { whatNext: 'tooMuch' }).progress.bridge).toEqual({ difficulty: 1, easyStreak: 2 });
+    expect(noPain(p, 'easy', { whatNext: 'more' }).progress.bridge.difficulty).toBe(2);
+  });
+
+  it('боль и «тяжело» понижают даже при усталости', () => {
+    const p = { bridge: { difficulty: 2 as const, easyStreak: 1 } };
+    expect(noPain(p, 'hard', { fatigue: 'tired' }).progress.bridge.difficulty).toBe(1);
+    expect(applySessionResult(p, items, 'easy', true, {}, { fatigue: 'tired' }).progress.bridge.difficulty).toBe(1);
+  });
+
+  it('«нормально» по-прежнему сбрасывает серию', () => {
+    const p = { bridge: { difficulty: 1 as const, easyStreak: 1 } };
+    expect(noPain(p, 'ok', { fatigue: 'tired' }).progress.bridge.easyStreak).toBe(0);
+  });
+
+  it('вызов без нового параметра работает как раньше', () => {
+    const r = applySessionResult({ bridge: { difficulty: 1, easyStreak: 1 } }, items, 'easy', false);
+    expect(r.progress.bridge.difficulty).toBe(2);
+  });
+});
+
 describe('профиль и безопасность', () => {
   const log = (id: string, date: string, pain = false): SessionLog => ({ id, childId: 'c', date, items: [], feedback: 'ok', pain });
 
@@ -346,8 +382,10 @@ describe('отзыв по упражнениям, перерыв, цель, св
     const sessions = [
       log('1', '2026-11-10T10:00:00Z', { items, itemFeedback: { bridge: 'hard' } }),
       log('2', '2026-11-12T10:00:00Z', { items, pain: true, painSigns: ['cry'], painArea: 'legs' }),
-      log('0', '2026-09-01T10:00:00Z', { items, feedback: 'hard' }),
+      log('0', '2026-09-01T10:00:00Z', { items, feedback: 'hard', fatigue: 'tired' }),
     ];
+    sessions[0].fatigue = 'tired';
+    sessions[1].whatNext = 'tooMuch';
     const text = buildSummary(child, a, sessions, [], { id: 'g', text: 'Стоять у опоры', setAt: '2026-10-01T10:00:00Z', reviews: [] }, new Date('2026-11-13T18:00:00Z'));
     expect(text).toContain('Маша, 5 лет 6 месяцев.');
     expect(text).not.toMatch(/ДЦП|диагноз/i);
@@ -359,5 +397,8 @@ describe('отзыв по упражнениям, перерыв, цель, св
     expect(text).toContain('Занятий за 30 дней: 2; всего: 3');
     expect(text).toContain('Давалось тяжело: «Мостик» (1)');
     expect(text).toContain('плакал или кричал; где: ноги');
+    expect(text).toContain('Ребёнок уставал после занятий: 1 из 2.');
+    expect(text).toContain('Говорил, что было слишком много: 1 раз.');
+    expect(text).not.toContain('Просил ещё');
   });
 });

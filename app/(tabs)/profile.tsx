@@ -27,7 +27,7 @@ import {
   Screen,
   SplitView,
   THEME_LABELS,
-  defaultThemeFor,
+  defaultTheme,
   tints,
   useLayout,
   type ThemeName,
@@ -73,7 +73,7 @@ export default function Profile() {
     })),
   ].sort((a, b) => b.date.localeCompare(a.date));
   const shown = showAll ? history : history.slice(0, HISTORY_PREVIEW);
-  const activeTheme = theme ?? defaultThemeFor(child.sex);
+  const activeTheme = theme ?? defaultTheme();
   const childLine = `${child.sex === 'girl' ? 'Девочка · ' : child.sex === 'boy' ? 'Мальчик · ' : ''}${formatAge(child.ageYears)}`;
 
   const cards: Record<SectionId, ReactNode> = {
@@ -102,7 +102,7 @@ export default function Profile() {
     ),
     goal: (
       <Card>
-        <H2>Наша цель</H2>
+        <H2>Моя цель</H2>
         {goal ? (
           <>
             <P>🎯 {goal.text}</P>
@@ -149,7 +149,7 @@ export default function Profile() {
     ),
     stats: (
       <Card>
-        <H2>Наши успехи</H2>
+        <H2>Мои успехи</H2>
         {stats.total === 0 ? (
           <P muted>Здесь появится статистика после первого занятия.</P>
         ) : (
@@ -227,9 +227,9 @@ export default function Profile() {
   if (tablet) {
     const menu: { id: SectionId; icon: string; title: string; value?: string }[] = [
       { id: 'child', icon: '🧒', title: 'Данные ребёнка' },
-      { id: 'goal', icon: '🎯', title: 'Наша цель', value: goal ? undefined : 'нет' },
+      { id: 'goal', icon: '🎯', title: 'Моя цель', value: goal ? undefined : 'нет' },
       { id: 'badges', icon: '🏅', title: 'Значки', value: `${earnedCount} из ${badges.length}` },
-      { id: 'stats', icon: '🌟', title: 'Наши успехи', value: stats.total > 0 ? String(stats.total) : undefined },
+      { id: 'stats', icon: '🌟', title: 'Мои успехи', value: stats.total > 0 ? String(stats.total) : undefined },
       { id: 'history', icon: '🗓️', title: 'История занятий', value: history.length > 0 ? String(history.length) : undefined },
       { id: 'theme', icon: '🎨', title: 'Оформление', value: THEME_LABELS[activeTheme] },
       { id: 'account', icon: '👤', title: 'Аккаунт' },

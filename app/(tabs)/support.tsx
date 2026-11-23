@@ -92,7 +92,7 @@ export default function Support() {
             <Text selectable style={{ fontSize: fs(15), lineHeight: fs(22), color: colors.text }}>
               {summary}
             </Text>
-            <Button title="Поделиться" variant="secondary" onPress={share} />
+            <Button title="Поделиться сводкой" variant="secondary" onPress={share} />
             {shareFailed && <P muted>Здесь нет системной кнопки «Поделиться» — выделите текст выше и скопируйте его.</P>}
           </>
         ) : (

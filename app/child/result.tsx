@@ -11,6 +11,9 @@ export default function Result() {
   if (!child || !assessment) return null;
   const level = LEVEL_DESCRIPTIONS[assessment.level];
   const byDoctor = !!assessment.gmfcsReported && assessment.level !== assessment.computedLevel;
+  // «Сомнение» (см. docs/разделы/07-решения.md, Р3): есть ответы «не знаю» о запрете врача
+  // или уровень по тесту и GMFCS заметно расходятся. Не блокируем, но предлагаем куратора.
+  const caution = assessment.unsureFlags.length > 0 || levelGap(assessment) >= LEVEL_GAP_WARNING;
 
   return (
     <Screen>
@@ -50,7 +53,12 @@ export default function Result() {
           <Button title="Написать куратору" variant="secondary" onPress={() => router.replace('/(tabs)/support')} />
         </>
       ) : (
-        <Button title="К занятиям" onPress={() => router.replace('/(tabs)')} />
+        <>
+          <Button title="К занятиям" onPress={() => router.replace('/(tabs)')} />
+          {caution && (
+            <Button title="Обсудить с куратором" variant="secondary" onPress={() => router.replace('/(tabs)/support')} />
+          )}
+        </>
       )}
       <Button title="Пройти вопросы заново" variant="secondary" onPress={() => router.replace('/child/questionnaire')} />
     </Screen>

@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { ActivityIndicator, Platform, Share } from 'react-native';
 
 import { applyImport, exportText, hasImportBackup, lastExportedAt, loadContent, saveSupport, undoImport } from '@/src/admin/content';
+import { useAdminGate } from '@/src/admin/gate';
 import { EMPTY_SUPPORT, parseBackup, planImport, validateSupport, type ImportPlan, type SupportContacts } from '@/src/domain/library';
 import { Button, Card, Field, H2, Notice, P, Screen } from '@/src/ui/kit';
 
@@ -40,6 +41,7 @@ function pickFileText(): Promise<string | null> {
 
 /** Раздел «Настройки»: контакты куратора, выгрузка содержания в файл и загрузка из файла. */
 export default function AdminSettings() {
+  const { lock } = useAdminGate();
   const [support, setSupport] = useState<SupportContacts | null>(null);
   const [failed, setFailed] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
@@ -211,6 +213,15 @@ export default function AdminSettings() {
         <Field label="Ссылка на чат родителей" value={support.communityUrl} onChangeText={(communityUrl) => set({ communityUrl })} autoCapitalize="none" keyboardType="url" placeholder="https://" />
         {errors.length > 0 && <Notice>{errors.join('\n')}</Notice>}
         <Button title="Сохранить контакты" onPress={saveContacts} />
+      </Card>
+
+      <Card>
+        <H2>Доступ в кабинет</H2>
+        <P muted>
+          Заблокирует кабинет на этом устройстве — в следующий раз снова спросит пароль. Это мягкая защита от случайного
+          захода, а не полноценный вход (он появится вместе с сервером).
+        </P>
+        <Button title="Заблокировать кабинет" variant="secondary" onPress={lock} />
       </Card>
     </Screen>
   );

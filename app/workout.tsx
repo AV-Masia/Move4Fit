@@ -8,13 +8,23 @@ import { PAIN_AREAS, PAIN_SIGNS, workoutBlock, type WorkoutBlock } from '@/src/d
 import type { ProgressionResult } from '@/src/domain/progression';
 import { FEEDBACK_LABELS, overallFeedback } from '@/src/domain/ratings';
 import { buildTodayWorkout, dayStatus } from '@/src/domain/selection';
-import type { Feedback } from '@/src/domain/types';
+import type { Fatigue, Feedback, WhatNext } from '@/src/domain/types';
 import { useApp } from '@/src/state/AppState';
 import { ExerciseVideo } from '@/src/ui/ExerciseVideo';
 import { formatClock, useStopwatch } from '@/src/ui/useStopwatch';
-import { Badge, Button, Card, Chip, ChipRow, Choice, H1, H2, Notice, P, RateRow, Screen, Sun, colors, feedbackColor, tints, fs } from '@/src/ui/kit';
+import { Badge, Button, Card, Chip, ChipRow, Choice, DifficultyDots, FaceChoiceRow, H1, H2, Notice, P, RateRow, Screen, Sun, colors, feedbackColor, tints, fs } from '@/src/ui/kit';
 
 const FEEDBACK: Feedback[] = ['easy', 'ok', 'hard'];
+const FATIGUE_OPTIONS = [
+  { value: 'fresh', icon: '🦸', label: 'Полон сил' },
+  { value: 'ok', icon: '🙂', label: 'Нормально' },
+  { value: 'tired', icon: '🦥', label: 'Устал' },
+] as const satisfies readonly { value: Fatigue; icon: string; label: string }[];
+const WHAT_NEXT_OPTIONS = [
+  { value: 'more', icon: '🔁', label: 'Хочу ещё' },
+  { value: 'done', icon: '👍', label: 'На сегодня хватит' },
+  { value: 'tooMuch', icon: '😵', label: 'Было много' },
+] as const satisfies readonly { value: WhatNext; icon: string; label: string }[];
 const SHORT: Record<Feedback, string> = { easy: 'Легко', ok: 'Норм', hard: 'Тяжело' };
 
 type Readiness = 'ask' | 'tired' | 'unwell' | 'ready';
@@ -62,6 +72,10 @@ function WorkoutSession() {
   const [result, setResult] = useState<ProgressionResult | null>(null);
   const watch = useStopwatch();
   const [durationSec, setDurationSec] = useState<number | null>(null);
+  // Необязательный шаг для ребёнка после «Завершить занятие»: занятие сохраняется только после него.
+  const [checkin, setCheckin] = useState(false);
+  const [fatigue, setFatigue] = useState<Fatigue | null>(null);
+  const [whatNext, setWhatNext] = useState<WhatNext | null>(null);
   const begin = () => {
     watch.start();
     setReadiness('ready');
@@ -118,7 +132,7 @@ function WorkoutSession() {
         )}
         {result.contactCurator && <Button title="Написать куратору" onPress={() => router.replace('/(tabs)/support')} />}
         <Button title="На главную" variant={result.contactCurator ? 'secondary' : 'primary'} onPress={() => router.replace('/(tabs)')} />
-        <Button title="Посмотреть динамику" variant="secondary" onPress={() => router.replace('/(tabs)/progress')} />
+        <Button title="Посмотреть мои успехи" variant="secondary" onPress={() => router.replace('/(tabs)/progress')} />
       </Screen>
     );
   }
@@ -177,9 +191,11 @@ function WorkoutSession() {
     };
     return (
       <Screen>
-        <P muted>
-          Упражнение {step + 1} из {plan.items.length} · сложность {item.difficulty} из 3 · ⏱ {formatClock(watch.seconds)}
-        </P>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', columnGap: 10, rowGap: 4 }}>
+          <P muted>Упражнение {step + 1} из {plan.items.length}</P>
+          <DifficultyDots level={item.difficulty} />
+          <P muted>⏱ {formatClock(watch.seconds)}</P>
+        </View>
         <H1>{ex.title}</H1>
         <ExerciseVideo url={ex.videoUrl} />
         <Card>
@@ -211,11 +227,11 @@ function WorkoutSession() {
   }
 
   const toggleSign = (id: string) => setPainSigns((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
-  const finish = () => {
+  const save = (skipCheckin: boolean) => {
     if (finished.current) return;
     finished.current = true;
     const itemFeedback = Object.fromEntries(doneItems.map((i) => [i.exerciseId, ratings[i.exerciseId]]));
-    const seconds = watch.stop();
+    const seconds = durationSec ?? watch.stop();
     setDurationSec(seconds);
     setResult(
       completeSession({ ...plan, items: doneItems }, overallFeedback(itemFeedback), pain, {
@@ -223,9 +239,31 @@ function WorkoutSession() {
         durationSec: seconds,
         painSigns,
         painArea: painArea ?? undefined,
+        fatigue: skipCheckin ? undefined : fatigue ?? undefined,
+        whatNext: skipCheckin ? undefined : whatNext ?? undefined,
       }),
     );
   };
+  const finish = () => {
+    // Если отмечена боль, сохраняем сразу: пауза и совет написать куратору не должны зависеть от дополнительного шага.
+    if (pain) return save(true);
+    if (durationSec === null) setDurationSec(watch.stop());
+    setCheckin(true);
+  };
+
+  if (checkin) {
+    return (
+      <Screen>
+        <H1>Как ты себя чувствуешь?</H1>
+        <FaceChoiceRow groupLabel="Как ты себя чувствуешь?" options={FATIGUE_OPTIONS} value={fatigue} onChange={setFatigue} />
+        <H2>Что дальше?</H2>
+        <FaceChoiceRow groupLabel="Что дальше?" options={WHAT_NEXT_OPTIONS} value={whatNext} onChange={setWhatNext} />
+        <P muted>Это необязательно. Можно ответить на один вопрос или оба.</P>
+        <Button title="Готово" onPress={() => save(false)} />
+        <Button title="Пропустить" variant="secondary" onPress={() => save(true)} />
+      </Screen>
+    );
+  }
 
   return (
     <Screen>

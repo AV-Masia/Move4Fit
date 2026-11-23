@@ -7,6 +7,7 @@ import { colors, fs, headerTheme } from '@/src/ui/kit';
 /** Адреса разделов кабинета — в одном месте. */
 export const ADMIN = {
   families: '/admin/families',
+  chat: '/admin/chat',
   exercises: '/admin/exercises',
   exerciseEdit: '/admin/exercises/edit',
   workouts: '/admin/workouts',
