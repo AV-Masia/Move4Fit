@@ -1,0 +1,4 @@
+interface:
+  display_name: "UX Approach"
+  short_description: "Проектирование сценариев, состояний и взаимодействия"
+  default_prompt: "Используй $ux-approach для проектирования или улучшения пользовательского сценария."

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ClaudeCodeEditorTabs">
+    <option name="activeSessionId" value="1214e588-9c38-441a-a801-9613d77846c3" />
+    <option name="openSessionIds">
+      <list>
+        <option value="71837e41-07f6-4d61-a9e9-73b0e8cf4d62" />
+        <option value="68f7e62e-decd-4571-886f-17161b662ae1" />
+        <option value="18d63cbb-d9e1-48ca-a925-5dbd8da9e7f0" />
+        <option value="1214e588-9c38-441a-a801-9613d77846c3" />
+      </list>
+    </option>
+    <option name="sessionPaths">
+      <map>
+        <entry key="1214e588-9c38-441a-a801-9613d77846c3" value="/sessions/new" />
+        <entry key="18d63cbb-d9e1-48ca-a925-5dbd8da9e7f0" value="/sessions/bb0db7c0-75cb-4a65-9488-649891c43aef" />
+        <entry key="68f7e62e-decd-4571-886f-17161b662ae1" value="/sessions/3c7a9bb7-0e38-4a2a-bc75-0eb80893f17e" />
+        <entry key="71837e41-07f6-4d61-a9e9-73b0e8cf4d62" value="/sessions/f0869f80-6cc3-46ff-a97b-d2fc37c642c0" />
+      </map>
+    </option>
+    <option name="sessionTitles">
+      <map>
+        <entry key="1214e588-9c38-441a-a801-9613d77846c3" value="Claude Code" />
+        <entry key="18d63cbb-d9e1-48ca-a925-5dbd8da9e7f0" value="можеим ли мы хранить личные и персональные данные," />
+        <entry key="68f7e62e-decd-4571-886f-17161b662ae1" value="мне необходимо сделать учетку для администартора," />
+        <entry key="71837e41-07f6-4d61-a9e9-73b0e8cf4d62" value="давай запустим это приложение" />
+      </map>
+    </option>
+  </component>
+</project>

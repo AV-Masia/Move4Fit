@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>Move4Fit — варианты стиля</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", system-ui, sans-serif; background: #f1f1f4; color: #222; padding: 28px; }
+  h1 { font-size: 26px; margin-bottom: 6px; }
+  .lead { color: #666; margin-bottom: 26px; }
+  .row { display: flex; gap: 26px; flex-wrap: wrap; align-items: flex-start; }
+  .opt { width: 300px; }
+  .opt h2 { font-size: 17px; margin-bottom: 2px; }
+  .opt .ref { font-size: 13px; color: #777; margin-bottom: 12px; min-height: 34px; }
+  .phone { width: 300px; height: 600px; border-radius: 34px; overflow: hidden; position: relative;
+           box-shadow: 0 14px 40px rgba(0,0,0,.18); border: 6px solid #1d1d22; display: flex; flex-direction: column; }
+  .body { flex: 1; padding: 22px 18px 0; overflow: hidden; }
+  .tabs { height: 58px; display: flex; justify-content: space-around; align-items: center; font-size: 11px; font-weight: 600; }
+  .tabs div { text-align: center; line-height: 1.5; }
+  .tabs i { display: block; font-style: normal; font-size: 19px; }
+  .item { display: flex; align-items: center; gap: 10px; }
+  .note { font-size: 13px; color: #555; margin-top: 12px; line-height: 1.45; }
+
+  /* 1. Дружелюбный персонаж */
+  .s1 { background: #FFF4E3; color: #3B2A20; }
+  .s1 .hero { background: #FF8A3D; border-radius: 28px; padding: 18px; color: #fff; position: relative; height: 150px; overflow: hidden; }
+  .s1 .hero b { font-size: 22px; display: block; width: 150px; line-height: 1.15; }
+  .s1 .hero span { font-size: 13px; opacity: .95; display: block; margin-top: 8px; width: 140px; }
+  .s1 .blob { position: absolute; right: -30px; bottom: -40px; width: 170px; height: 170px; background: #FFC44D; border-radius: 46% 54% 60% 40% / 50% 45% 55% 50%; }
+  .s1 .face { position: absolute; right: 26px; bottom: 26px; width: 84px; height: 84px; background: #FFE08A; border-radius: 50%; }
+  .s1 .face::before, .s1 .face::after { content: ""; position: absolute; top: 32px; width: 9px; height: 13px; background: #3B2A20; border-radius: 50%; }
+  .s1 .face::before { left: 24px; } .s1 .face::after { right: 24px; }
+  .s1 .smile { position: absolute; left: 30px; top: 50px; width: 24px; height: 12px; border-bottom: 4px solid #3B2A20; border-radius: 0 0 24px 24px; }
+  .s1 .list { margin-top: 16px; display: grid; gap: 10px; }
+  .s1 .item { background: #fff; border-radius: 20px; padding: 12px 14px; font-size: 14px; font-weight: 600; }
+  .s1 .dot { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; font-size: 17px; }
+  .s1 .btn { margin-top: 16px; background: #3B2A20; color: #fff; text-align: center; padding: 15px; border-radius: 26px; font-weight: 700; }
+  .s1 .tabs { background: #fff; color: #A9917F; } .s1 .tabs .on { color: #FF8A3D; }
+
+  /* 2. Игровой яркий */
+  .s2 { background: #fff; color: #2B2B2B; }
+  .s2 .top { display: flex; justify-content: space-between; font-weight: 800; font-size: 14px; color: #777; }
+  .s2 h3 { font-size: 23px; font-weight: 900; margin: 12px 0 4px; }
+  .s2 p { font-size: 13px; color: #777; font-weight: 600; }
+  .s2 .path { display: flex; justify-content: space-between; margin: 18px 0; }
+  .s2 .day { width: 34px; text-align: center; font-size: 11px; font-weight: 800; color: #999; }
+  .s2 .day i { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #E9E9E9; box-shadow: 0 4px 0 #CFCFCF; font-style: normal; margin-bottom: 8px; color: #fff; font-size: 15px; }
+  .s2 .day.done i { background: #58CC02; box-shadow: 0 4px 0 #46A302; }
+  .s2 .day.now i { background: #FFC800; box-shadow: 0 4px 0 #E0A800; }
+  .s2 .card { border: 2px solid #E5E5E5; border-radius: 18px; padding: 6px 14px; }
+  .s2 .item { padding: 10px 0; font-size: 14px; font-weight: 700; border-bottom: 2px solid #F0F0F0; }
+  .s2 .item:last-child { border: 0; }
+  .s2 .dot { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; font-size: 16px; }
+  .s2 .btn { margin-top: 18px; background: #58CC02; color: #fff; text-align: center; padding: 15px; border-radius: 16px; font-weight: 900; letter-spacing: .5px; box-shadow: 0 5px 0 #46A302; text-transform: uppercase; }
+  .s2 .tabs { border-top: 2px solid #E5E5E5; color: #AFAFAF; } .s2 .tabs .on { color: #1CB0F6; }
+
+  /* 3. Спокойная забота */
+  .s3 { background: linear-gradient(170deg, #E9E4FF 0%, #FCE7EC 55%, #FFF3E2 100%); color: #33305A; }
+  .s3 small { font-size: 13px; opacity: .7; }
+  .s3 h3 { font-family: Georgia, "Times New Roman", serif; font-size: 27px; font-weight: 400; margin: 6px 0 16px; line-height: 1.2; }
+  .s3 .card { background: rgba(255,255,255,.72); border-radius: 26px; padding: 8px 18px; box-shadow: 0 10px 30px rgba(110,90,200,.13); }
+  .s3 .item { padding: 13px 0; font-size: 14.5px; border-bottom: 1px solid rgba(51,48,90,.08); }
+  .s3 .item:last-child { border: 0; }
+  .s3 .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .s3 .week { display: flex; gap: 8px; margin-top: 18px; align-items: center; font-size: 13px; }
+  .s3 .week i { width: 34px; height: 6px; border-radius: 3px; background: rgba(51,48,90,.14); }
+  .s3 .week i.f { background: #7C6BDB; }
+  .s3 .btn { margin-top: 18px; background: #5F4FC4; color: #fff; text-align: center; padding: 15px; border-radius: 30px; font-weight: 600; }
+  .s3 .tabs { background: rgba(255,255,255,.6); color: #9C97BD; } .s3 .tabs .on { color: #5F4FC4; }
+
+  /* 4. Современная клиника */
+  .s4 { background: #F4F7F9; color: #10283A; }
+  .s4 .head { display: flex; justify-content: space-between; align-items: center; }
+  .s4 .head b { font-size: 20px; } .s4 .head small { display: block; color: #6A7D8B; font-size: 12.5px; font-weight: 400; margin-top: 2px; }
+  .s4 .ava { width: 40px; height: 40px; border-radius: 50%; background: #D5F0EC; display: grid; place-items: center; font-weight: 700; color: #0B7A6E; }
+  .s4 .prog { background: #fff; border-radius: 16px; padding: 14px; margin-top: 16px; display: flex; gap: 14px; align-items: center; border: 1px solid #E3EAEF; }
+  .s4 .ring { width: 58px; height: 58px; border-radius: 50%; background: conic-gradient(#0E9384 0 33%, #E3EAEF 0); display: grid; place-items: center; }
+  .s4 .ring span { width: 44px; height: 44px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+  .s4 .prog b { font-size: 14.5px; } .s4 .prog small { color: #6A7D8B; font-size: 12.5px; display: block; margin-top: 2px; }
+  .s4 .lbl { font-size: 11.5px; letter-spacing: .8px; text-transform: uppercase; color: #6A7D8B; font-weight: 700; margin: 16px 0 8px; }
+  .s4 .card { background: #fff; border-radius: 16px; border: 1px solid #E3EAEF; padding: 2px 14px; }
+  .s4 .item { padding: 11px 0; font-size: 14px; border-bottom: 1px solid #EEF2F5; justify-content: space-between; }
+  .s4 .item:last-child { border: 0; }
+  .s4 .item small { color: #6A7D8B; font-size: 12px; }
+  .s4 .btn { margin-top: 14px; background: #0E9384; color: #fff; text-align: center; padding: 14px; border-radius: 12px; font-weight: 600; }
+  .s4 .tabs { background: #fff; border-top: 1px solid #E3EAEF; color: #93A3AF; } .s4 .tabs .on { color: #0E9384; }
+
+  /* 5. Объединённый: персонаж + дорожка недели */
+  .s5 { background: #FFF4E3; color: #3B2A20; }
+  .s5 .body { padding-top: 16px; }
+  .s5 .hero { background: #FF8A3D; border-radius: 26px; padding: 16px 18px; color: #fff; position: relative; height: 118px; overflow: hidden; }
+  .s5 .hero b { font-size: 21px; display: block; width: 150px; line-height: 1.15; }
+  .s5 .hero span { font-size: 13px; opacity: .95; display: block; margin-top: 6px; }
+  .s5 .blob { position: absolute; right: -34px; bottom: -52px; width: 160px; height: 160px; background: #FFC44D; border-radius: 46% 54% 60% 40% / 50% 45% 55% 50%; }
+  .s5 .face { position: absolute; right: 22px; bottom: 16px; width: 74px; height: 74px; background: #FFE08A; border-radius: 50%; }
+  .s5 .face::before, .s5 .face::after { content: ""; position: absolute; top: 27px; width: 8px; height: 12px; background: #3B2A20; border-radius: 50%; }
+  .s5 .face::before { left: 21px; } .s5 .face::after { right: 21px; }
+  .s5 .smile { position: absolute; left: 26px; top: 43px; width: 22px; height: 11px; border-bottom: 4px solid #3B2A20; border-radius: 0 0 22px 22px; }
+  .s5 .weekhead { white-space: nowrap; display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 700; margin: 12px 2px 8px; }
+  .s5 .weekhead span:last-child { color: #C25A14; }
+  .s5 .path { display: flex; justify-content: space-between; }
+  .s5 .day { width: 32px; text-align: center; font-size: 10.5px; font-weight: 700; color: #A9917F; }
+  .s5 .day i { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #F6E6D0; font-style: normal; margin-bottom: 5px; color: #fff; font-size: 14px; }
+  .s5 .day.done i { background: #4CB963; box-shadow: 0 3px 0 #3A9A4E; }
+  .s5 .day.now i { background: #FFC44D; box-shadow: 0 3px 0 #E0A52E; }
+  .s5 .day.now { color: #3B2A20; }
+  .s5 .list { margin-top: 12px; display: grid; gap: 7px; }
+  .s5 .item { background: #fff; border-radius: 18px; padding: 8px 12px; font-size: 13.5px; font-weight: 600; }
+  .s5 .dot { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; font-size: 15px; }
+  .s5 .btn { margin-top: 12px; background: #FF8A3D; color: #fff; text-align: center; padding: 13px; border-radius: 22px; font-weight: 800; font-size: 16px; box-shadow: 0 5px 0 #D96A1F; }
+  .s5 .tabs { background: #fff; color: #A9917F; } .s5 .tabs .on { color: #FF8A3D; }
+  .opt.pick h2 { color: #D96A1F; }
+</style>
+</head>
+<body>
+  <h1>Move4Fit — направления стиля</h1>
+  <p class="lead">Один и тот же экран «Сегодня» в нескольких стилях. Это собственные эскизы «в духе» жанра, не копии чужих приложений.</p>
+  <div class="row">
+
+    <div class="opt">
+      <h2>1. Дружелюбный персонаж</h2>
+      <div class="ref">В духе Headspace, Khan Academy Kids: тёплые цвета, мягкие формы, герой-солнышко</div>
+      <div class="phone s1">
+        <div class="body">
+          <div class="hero">
+            <b>Привет, Маша!</b><span>5 упражнений<br>15 минут</span>
+            <div class="blob"></div><div class="face"><div class="smile"></div></div>
+          </div>
+          <div class="list">
+            <div class="item"><div class="dot" style="background:#FFE3C7">🤸</div>Дыхание «шарик»</div>
+            <div class="item"><div class="dot" style="background:#FFD9D2">💪</div>«Мостик»</div>
+            <div class="item"><div class="dot" style="background:#FFF0B8">💪</div>Подъём на носочки</div>
+            <div class="item"><div class="dot" style="background:#DDF0E4">🌙</div>Растяжка икр лёжа</div>
+          </div>
+          <div class="btn">Начать занятие</div>
+        </div>
+        <div class="tabs"><div class="on"><i>☀️</i>Сегодня</div><div><i>🌱</i>Динамика</div><div><i>💬</i>Куратор</div><div><i>🧡</i>Профиль</div></div>
+      </div>
+      <p class="note"><b>Плюсы:</b> самый тёплый, ребёнку есть к кому «прийти». Продолжает нынешний стиль.<br><b>Минусы:</b> персонажа нужно нарисовать у иллюстратора.</p>
+    </div>
+
+    <div class="opt">
+      <h2>2. Игровой яркий</h2>
+      <div class="ref">В духе Duolingo, GoNoodle: сочные цвета, «пухлые» кнопки, дорожка недели</div>
+      <div class="phone s2">
+        <div class="body">
+          <div class="top"><span>МАША</span><span>🔥 2 недели</span></div>
+          <h3>Занятие дня</h3>
+          <p>1 из 3 на этой неделе</p>
+          <div class="path">
+            <div class="day"><i></i>Пн</div><div class="day"><i></i>Вт</div><div class="day done"><i>✓</i>Ср</div>
+            <div class="day"><i></i>Чт</div><div class="day"><i></i>Пт</div><div class="day now"><i>★</i>Сб</div><div class="day"><i></i>Вс</div>
+          </div>
+          <div class="card">
+            <div class="item"><div class="dot" style="background:#DDF4FF">🤸</div>Дыхание «шарик»</div>
+            <div class="item"><div class="dot" style="background:#FFE8E8">💪</div>«Мостик»</div>
+            <div class="item"><div class="dot" style="background:#FFF4CC">💪</div>Подъём на носочки</div>
+            <div class="item"><div class="dot" style="background:#E3F9D2">🌙</div>Растяжка икр лёжа</div>
+          </div>
+          <div class="btn">Поехали!</div>
+        </div>
+        <div class="tabs"><div class="on"><i>🏠</i>Сегодня</div><div><i>📈</i>Динамика</div><div><i>💬</i>Куратор</div><div><i>👤</i>Профиль</div></div>
+      </div>
+      <p class="note"><b>Плюсы:</b> самый весёлый, сильнее всего мотивирует возвращаться.<br><b>Минусы:</b> тянет к геймификации, которую вы отложили; может выглядеть несерьёзно для медицинской темы.</p>
+    </div>
+
+    <div class="opt">
+      <h2>3. Спокойная забота</h2>
+      <div class="ref">В духе Calm, Flo: мягкие градиенты, воздух, шрифт с засечками в заголовках</div>
+      <div class="phone s3">
+        <div class="body">
+          <small>Суббота, 14 ноября</small>
+          <h3>Доброе утро.<br>Занятие для Маши готово</h3>
+          <div class="card">
+            <div class="item"><div class="dot" style="background:#F2A7B8"></div>Дыхание «шарик»</div>
+            <div class="item"><div class="dot" style="background:#7C6BDB"></div>«Мостик»</div>
+            <div class="item"><div class="dot" style="background:#7C6BDB"></div>Подъём на носочки</div>
+            <div class="item"><div class="dot" style="background:#F5C16C"></div>Растяжка икр лёжа</div>
+          </div>
+          <div class="week"><i class="f"></i><i></i><i></i><span>1 из 3 на этой неделе</span></div>
+          <div class="btn">Начать, около 15 минут</div>
+        </div>
+        <div class="tabs"><div class="on"><i>◐</i>Сегодня</div><div><i>◔</i>Динамика</div><div><i>◍</i>Куратор</div><div><i>○</i>Профиль</div></div>
+      </div>
+      <p class="note"><b>Плюсы:</b> успокаивает уставшего родителя, выглядит дорого и бережно.<br><b>Минусы:</b> менее «детский»; ребёнку на экране занятия будет скучнее.</p>
+    </div>
+
+    <div class="opt">
+      <h2>4. Современная клиника</h2>
+      <div class="ref">В духе Hinge Health, Kaia, приложений медцентров: чистый, белый, бирюзовый акцент</div>
+      <div class="phone s4">
+        <div class="body">
+          <div class="head"><b>Маша<small>Группа: ходит с опорой</small></b><div class="ava">М</div></div>
+          <div class="prog"><div class="ring"><span>1/3</span></div><div><b>План на неделю</b><small>Следующее занятие сегодня</small></div></div>
+          <div class="lbl">Занятие дня · 15 мин</div>
+          <div class="card">
+            <div class="item"><span>Дыхание «шарик»</span><small>разминка</small></div>
+            <div class="item"><span>«Мостик»</span><small>сила</small></div>
+            <div class="item"><span>Подъём на носочки</span><small>сила</small></div>
+            <div class="item"><span>Растяжка икр лёжа</span><small>заминка</small></div>
+          </div>
+          <div class="btn">Начать занятие</div>
+        </div>
+        <div class="tabs"><div class="on"><i>▣</i>Сегодня</div><div><i>◫</i>Динамика</div><div><i>✉</i>Куратор</div><div><i>◉</i>Профиль</div></div>
+      </div>
+      <p class="note"><b>Плюсы:</b> вызывает доверие, удобно показывать врачам и партнёрам-клиникам.<br><b>Минусы:</b> самый сухой — это противоположность «весёлому».</p>
+    </div>
+
+    <div class="opt pick">
+      <h2>5. Объединённый: 1 + 2</h2>
+      <div class="ref">Герой-солнышко и тёплая палитра из 1, дорожка недели и «пухлая» кнопка из 2</div>
+      <div class="phone s5">
+        <div class="body">
+          <div class="hero">
+            <b>Привет, Маша!</b><span>5 упражнений<br>15 минут</span>
+            <div class="blob"></div><div class="face"><div class="smile"></div></div>
+          </div>
+          <div class="weekhead"><span>1 из 3 за неделю</span><span>🔥 2 недели подряд</span></div>
+          <div class="path">
+            <div class="day"><i></i>Пн</div><div class="day"><i></i>Вт</div><div class="day done"><i>✓</i>Ср</div>
+            <div class="day"><i></i>Чт</div><div class="day"><i></i>Пт</div><div class="day now"><i>★</i>Сб</div><div class="day"><i></i>Вс</div>
+          </div>
+          <div class="list">
+            <div class="item"><div class="dot" style="background:#FFE3C7">🤸</div>Дыхание «шарик»</div>
+            <div class="item"><div class="dot" style="background:#FFD9D2">💪</div>«Мостик»</div>
+            <div class="item"><div class="dot" style="background:#FFF0B8">💪</div>Подъём на носочки</div>
+            <div class="item"><div class="dot" style="background:#DDF0E4">🌙</div>Растяжка икр лёжа</div>
+          </div>
+          <div class="btn">Начать занятие</div>
+        </div>
+        <div class="tabs"><div class="on"><i>☀️</i>Сегодня</div><div><i>🌱</i>Динамика</div><div><i>💬</i>Куратор</div><div><i>🧡</i>Профиль</div></div>
+      </div>
+      <p class="note"><b>Что откуда:</b> карточка с героем, список и вкладки — из 1; дорожка недели, «недели подряд» и кнопка с гранью — из 2. Пустые дни бледные, чтобы не читалось как «надо каждый день».<br><b>Без баллов и наград:</b> показано только то, что приложение уже считает.</p>
+    </div>
+
+  </div>
+</body>
+</html>
